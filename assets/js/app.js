@@ -11,63 +11,33 @@ let timer;
 let newCardBlock;
 let newCardFlipBlock;
 
-function clearGlobal() {
-    clearInterval(timer);
-    lastCard = 51;
-    ace = 0;
-    moves = 0;
-    cardsDealt = 0;
-    seconds = 0;
-    dropArray = [];
-    toDeal = [];
-}
+pressDtoDeal();
 
-document.addEventListener('keydown', function (event) {
-    if (event.code === 'KeyD') {
-        gameStart();
-    }
-});
-
-let container = document.createElement('div');
-container.id = 'container';
-document.body.prepend(container);
-
-let gameArea = document.createElement('div');
-gameArea.id = 'gameArea';
-container.append(gameArea);
-
-let scoreArea = document.createElement('div');
-scoreArea.id = 'scoreArea';
-container.append(scoreArea);
-
-let scoreBlockTime = document.createElement('div');
-scoreBlockTime.className = 'scoreBlock';
-scoreArea.append(scoreBlockTime);
-
-let scoreValueTime = document.createElement('span');
-scoreValueTime.className = 'scoreValue';
-scoreValueTime.innerText = '0:00';
-scoreBlockTime.append(scoreValueTime);
-
-let scoreBlockMoves = document.createElement('div');
-scoreBlockMoves.className = 'scoreBlock';
-scoreArea.append(scoreBlockMoves);
-
-let scoreValueMoves = document.createElement('span');
-scoreValueMoves.className = 'scoreValue';
-scoreValueMoves.innerText = moves + ' moves';
-scoreBlockMoves.append(scoreValueMoves);
+let {gameArea, scoreValueTime, scoreValueMoves} = drawFrame();
 
 gameStart();
 
 function gameStart() {
     clearGlobal();
-    shuffleCards(1, cards);
     handsPlayed++;
 
+    drawGame();
+    
+    // new game
+    shuffle();
+    dealGame();
+    
+    // TODO: load state of existing game
+}
+
+function shuffle() {
+    shuffleCards(1, cards);
     for (let i = 28; i < cards.length; i++) {
         toDeal[i] = cards[i];
     }
+}
+
+function drawGame() {
     gameArea.innerHTML = '';
 
     let gameAreaSpan = document.createElement('span');
@@ -117,12 +87,17 @@ function gameStart() {
             allowDrop(event);
         });
         gameArea.append(playBlock);
-
-        dealCards(i, playBlock);
     }
 
     scoreValueTime.innerText = '0:00';
     scoreValueMoves.innerText = moves + ' moves';
+}
+
+function dealGame() {
+    for (let i = 0; i < 7; i++) {
+        const playBlock = gameArea.querySelectorAll('.cardBlock')[i]
+        dealCards(i, playBlock);
+    }
 }
 
 function displayModel() {
@@ -492,4 +467,55 @@ function dealCards(count, playBlock) {
             increaseMoves();
         });
     }
+}
+
+function pressDtoDeal() {
+    document.addEventListener('keydown', event => {
+        if (event.code === 'KeyD') gameStart();
+    });
+}
+
+function clearGlobal() {
+    clearInterval(timer);
+    lastCard = 51;
+    ace = 0;
+    moves = 0;
+    cardsDealt = 0;
+    seconds = 0;
+    dropArray = [];
+    toDeal = [];
+}
+
+function drawFrame() {
+    const container = document.createElement('div');
+    container.id = 'container';
+    document.body.prepend(container);
+
+    const gameArea = document.createElement('div');
+    gameArea.id = 'gameArea';
+
+    container.append(gameArea);
+    let scoreArea = document.createElement('div');
+    scoreArea.id = 'scoreArea';
+
+    container.append(scoreArea);
+    let scoreBlockTime = document.createElement('div');
+    scoreBlockTime.className = 'scoreBlock';
+
+    scoreArea.append(scoreBlockTime);
+    let scoreValueTime = document.createElement('span');
+    scoreValueTime.className = 'scoreValue';
+
+    scoreValueTime.innerText = '0:00';
+    scoreBlockTime.append(scoreValueTime);
+    let scoreBlockMoves = document.createElement('div');
+    scoreBlockMoves.className = 'scoreBlock';
+
+    scoreArea.append(scoreBlockMoves);
+    let scoreValueMoves = document.createElement('span');
+    scoreValueMoves.className = 'scoreValue';
+
+    scoreValueMoves.innerText = moves + ' moves';
+    scoreBlockMoves.append(scoreValueMoves);
+    return {gameArea, scoreValueTime, scoreValueMoves};
 }
