@@ -22,7 +22,7 @@ function clearGlobal(){
 	toDeal = [];
 }
 document.addEventListener('keydown', function(event) {
-	if (event.code == 'KeyD') {
+	if (event.code === 'KeyD') {
 		gameStart();
 	}
 });
@@ -94,10 +94,10 @@ function gameStart(){
 	for(let i = 0; i < 4; i++){
 		let aceBlock = document.createElement('div');
 		aceBlock.className = 'cardBlockAce';
-		aceBlock.addEventListener('drop', function(){
+		aceBlock.addEventListener('drop', function(event){
 			aceDrop(event);
 		});
-		aceBlock.addEventListener('dragover', function(){
+		aceBlock.addEventListener('dragover', function(event){
 			allowDrop(event);
 		});
 		gameArea.append(aceBlock);
@@ -109,10 +109,10 @@ function gameStart(){
 	for(let i = 0; i < 7; i++){
 		let playBlock = document.createElement('div');
 		playBlock.className = 'cardBlock';
-		playBlock.addEventListener('drop', function(){
+		playBlock.addEventListener('drop', function(event){
 			drop(event);
 		});
-		playBlock.addEventListener('dragover', function(){
+		playBlock.addEventListener('dragover', function(event){
 			allowDrop(event);
 		});
 		gameArea.append(playBlock);
@@ -133,18 +133,18 @@ function displayModel(){
 	model.id = 'model';
 	shadowBack.append(model);
 
-	let modelConent = document.createElement('div');
-	modelConent.id = 'modelConent';
-	model.append(modelConent);
+	let modelContent = document.createElement('div');
+	modelContent.id = 'modelContent';
+	model.append(modelContent);
 
 	let modelSpan = document.createElement('span');
 	modelSpan.id = 'modelSpan';
 	modelSpan.innerText = 'Congratulations, you won!';
-	modelConent.append(modelSpan);
+	modelContent.append(modelSpan);
 
 	let modelScoreBlock = document.createElement('div');
 	modelScoreBlock.id = 'modelScoreBlock';
-	modelConent.append(modelScoreBlock);
+	modelContent.append(modelScoreBlock);
 
 	let playedSpan = document.createElement('span');
 	playedSpan.className = 'scoreSpan';
@@ -165,19 +165,11 @@ function displayModel(){
 			gameStart();
 		}, 200);
 	});
-	modelConent.append(modelBtn);
+	modelContent.append(modelBtn);
 	setTimeout(function(){
 		shadowBack.style.cssText = 'opacity:1';
 	}, 1);
 }
-
-function fadeIn(el, time){
-	el.style.cssText = 'opacity:1';
-	setTimeout(function(){
-		el.removeAttribute('style');
-	}, time);
-}
-
 function fadeOut(el, time){
 	el.style.cssText = 'opacity:0;';
 	setTimeout(function(){
@@ -212,17 +204,17 @@ function aceDrop(ev){
 		let cardId = element.getAttribute('data-id');
 		toDeal[cardId] = null;
 	}
-	if(ev.target.className != 'cardBlockAce'){
+	if(ev.target.className !== 'cardBlockAce'){
 		let cardBlockParent = ev.target.closest('.cardBlockAce');
 		let currentFace = element.getAttribute('data-face');
 		let currentSuit = element.getAttribute('data-suit');
 		let cardsEl = cardBlockParent.getElementsByClassName('card');
 		let dropSuit = cardsEl[cardsEl.length - 1].getAttribute('data-suit');
 
-		if(currentSuit == dropSuit){
+		if(currentSuit === dropSuit){
 			let currentFacePos = cardPosition(currentFace, 1) - 1;
 			let dropFacePos = cardPosition(cardsEl[cardsEl.length - 1].getAttribute('data-face'), 1);
-			if(currentFacePos == dropFacePos){
+			if(currentFacePos === dropFacePos){
 				element.className = 'card';
 				cardBlockParent.append(element);
 				increaseMoves();
@@ -237,7 +229,7 @@ function aceDrop(ev){
 			}
 		}
 	}else{
-		if(element.getAttribute('data-face') == 'A'){
+		if(element.getAttribute('data-face') === 'A'){
 			element.className = 'card';
 			ev.target.appendChild(element);
 			increaseMoves();
@@ -263,7 +255,7 @@ function drop(ev) {
 			let cardId = element.getAttribute('data-id');
 			toDeal[cardId] = null;
 		}
-		if(ev.target.className == 'cardBlock' && face == 'K'){
+		if(ev.target.className === 'cardBlock' && face === 'K'){
 			element.className = 'card topClass' + ev.target.getElementsByClassName('card').length + 1;
 			ev.target.appendChild(element);
 			if(parent != null){
@@ -279,11 +271,11 @@ function drop(ev) {
 		let cardsEl = cardBlockParent.getElementsByClassName('card');
 		let dropSuit = (cardsEl[cardsEl.length - 1])? cardsEl[cardsEl.length - 1].getAttribute('data-suit') : 'blank';
 
-		if(((currentSuit == 'heart' || currentSuit == 'diamond') && (dropSuit == 'spade' || dropSuit == 'clubs')) || ((currentSuit == 'spade' || currentSuit == 'clubs') && (dropSuit == 'heart' || dropSuit == 'diamond'))){
+		if(((currentSuit === 'heart' || currentSuit === 'diamond') && (dropSuit === 'spade' || dropSuit === 'clubs')) || ((currentSuit === 'spade' || currentSuit === 'clubs') && (dropSuit === 'heart' || dropSuit === 'diamond'))){
 			let currentFacePos = cardPosition(face, 0) + 1;
 			let dropFacePos = cardPosition(cardsEl[cardsEl.length - 1].getAttribute('data-face'), 0);
-			if(currentFacePos == dropFacePos){
-				element.setAttribute('temp', true);
+			if(currentFacePos === dropFacePos){
+				element.setAttribute('temp', 'true');
 				element.className = 'card topClass' + (ev.target.closest('.cardBlock').getElementsByClassName('card').length + 1);
 				cardBlockParent.append(element);
 
@@ -307,14 +299,14 @@ function checkWin(){
 	let aceBlock = document.getElementsByClassName('cardBlockAce');
 	for(let i = 0; i < aceBlock.length; i++){
 		let card = aceBlock[i].getElementsByClassName('card');
-		if(card.length == 13){
+		if(card.length === 13){
 			ace++;
 		}else{
 			return ace = 0;
 		}
 	}
 
-	if(ace == 4){
+	if(ace === 4){
 		return gameWin();
 	}
 }
@@ -346,7 +338,7 @@ function gameWin(){
 function increaseMoves(){
 	moves++;
 	document.getElementsByClassName('scoreValue')[1].innerText = moves + ' moves';
-	if(moves == 1){
+	if(moves === 1){
 		startTimer();
 	}
 }
@@ -354,7 +346,7 @@ function increaseMoves(){
 function timerConvert(ms) {
 	let minutes = Math.floor(ms / 60000);
 	let seconds = ((ms % 60000) / 1000).toFixed(0);
-	return (seconds == 60)? (minutes + 1) + ':00' : minutes + ':' + ((seconds < 10)? '0' : '') + seconds;
+	return (seconds === '60')? (minutes + 1) + ':00' : minutes + ':' + ((seconds < 10)? '0' : '') + seconds;
 }
 
 function startTimer(){
@@ -376,7 +368,7 @@ function checkDealt(count){
 		}
 
 		count++;
-		if(count == 30){
+		if(count === 30){
 			lastCard = 0;
 			return false;
 		}
@@ -399,10 +391,10 @@ function dealCards(count, playBlock){
 		checkDealt(1);
 	}
 
-	if(lastCard != 0){
+	if(lastCard !== 0){
 		for(let i = 1; i <= (count + 1); i++){
 			let viewClass = (cardsDealt < 28)? ' cardHidden' : '';
-			let colourClass = (deal[cardsDealt].suit == 'heart' || deal[cardsDealt].suit == 'diamond')? ' red' : ' black';
+			let colourClass = (deal[cardsDealt].suit === 'heart' || deal[cardsDealt].suit === 'diamond')? ' red' : ' black';
 			let topClass = (i > 1)? ' topClass' + i : '';
 			let card = document.createElement('div');
 			card.className = 'card' + topClass + viewClass;
@@ -411,10 +403,10 @@ function dealCards(count, playBlock){
 			card.setAttribute('data-face', deal[cardsDealt].face);
 			card.setAttribute('data-suit', deal[cardsDealt].suit);
 			if(cardsDealt > 27){
-				card.setAttribute('draggable', true);
-				card.setAttribute('deal-card', true);
+				card.setAttribute('draggable', 'true');
+				card.setAttribute('deal-card', 'true');
 			}
-			card.addEventListener('dragstart', function(){
+			card.addEventListener('dragstart', function(event){
 				drag(event);
 			});
 			playBlock.append(card);
@@ -436,7 +428,7 @@ function dealCards(count, playBlock){
 			suitCentre.className = 'suit-centre';
 			card.append(suitCentre);
 
-			if(deal[cardsDealt].face != 'J' && deal[cardsDealt].face != 'Q' && deal[cardsDealt].face != 'K' && deal[cardsDealt].face != 'A'){
+			if(deal[cardsDealt].face !== 'J' && deal[cardsDealt].face !== 'Q' && deal[cardsDealt].face !== 'K' && deal[cardsDealt].face !== 'A'){
 				for(let k = 0; k < parseInt(deal[cardsDealt].face); k++){
 					let suitEl = document.createElement('div');
 					suitEl.className = deal[cardsDealt].suit + ' ' + deal[cardsDealt].suitClass + '-' + suitCentreClasses[k];
@@ -463,7 +455,7 @@ function dealCards(count, playBlock){
 			suitBottom.append(suitBottomEl);
 
 			cardsDealt++;
-			if(cardsDealt == 28){
+			if(cardsDealt === 28){
 				let cardBlocks = document.getElementsByClassName('cardBlock');
 				for(let i = 0; i < cardBlocks.length; i++){
 					let cardsEl = cardBlocks[i].getElementsByClassName('card');
